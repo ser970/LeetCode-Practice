@@ -1,0 +1,136 @@
+
+
+test_list = [[1,1],[0,0]]
+test_list2 = [[1,1],[1,1]]
+test_list3 = [[1,1,0,0],
+              [1,0,0,0],
+              [1,0,0,0],
+              [0,0,0,0],
+              [0,0,0,0]]  
+
+#start= 0,0
+#mark start location
+#choose a direction
+#check if node in that direction is valid
+#move to node 
+#mark node as traveled
+#repeat until no more nodes in the direction you are traveling 
+
+#need an array of nodes traveled
+
+traveled_array=[]
+
+
+#need a fuction check if the direction is valid returns true/false if out of bounds and no untraveled valid paths
+
+
+def is_valid(traveled_array,graph,current_location,size,times_backtracked):
+
+    y = current_location[0]
+    x = current_location[1]
+#try to go left
+    been_here = new_node([y,(x-1)],traveled_array)
+    if((x-1)>=0):
+        if(graph[y][x-1]==1 and been_here==True):
+            new_location = current_location[:]
+            new_location[1] -=1
+            traveled_array.append(new_location)
+            size+=1
+            return is_valid(traveled_array,graph,new_location,size,times_backtracked)
+#try to go right
+    been_here = new_node([y,(x+1)],traveled_array)
+    if((x+1)<len(graph[y])):
+        if(graph[y][x+1]==1 and been_here==True):
+            new_location = current_location[:]
+            new_location[1] +=1
+            traveled_array.append(new_location)
+            size+=1
+            return is_valid(traveled_array,graph,new_location,size,times_backtracked)
+#try to go down
+    been_here = new_node([(y+1),x],traveled_array)
+    if((y+1)<len(graph)):
+        if(graph[y+1][x]==1 and been_here==True):
+            new_location = current_location[:]
+            new_location[0] +=1
+            traveled_array.append(new_location)
+            size+=1
+            return is_valid(traveled_array,graph,new_location,size,times_backtracked)
+#try to go up
+    been_here = new_node([(y-1),x],traveled_array)
+    if((y-1)>0):
+        if(graph[y-1][x]==1 and been_here==True):
+            new_location = current_location[:]
+            new_location[0] -=1
+            traveled_array.append(new_location)
+            size+=1
+            return is_valid(traveled_array,graph,new_location,size,times_backtracked)
+#end of the line bb    
+    backtrack_location = list(traveled_array[len(traveled_array)-2-times_backtracked])
+    times_backtracked+=1
+    if (backtrack_location == traveled_array[0]):
+#        print("here!")
+        return  size
+    return is_valid(traveled_array,graph,backtrack_location,size,times_backtracked)
+
+#need a function to take TRUE and ADD to the traveled array or to take FALSE and backtrack a step
+
+#checks against traveled array
+def new_node(candidate_location,traveled_array):
+    for x in traveled_array:
+        if (x == candidate_location):
+            return(False)
+    return(True)
+
+#finds largest island given in array
+def find_largest_island(array):
+    i =0
+    largest =0
+    temp = 0
+    while (i<len(array)):
+        z=0
+        while (z<len(array[i])):
+            if(array[i][z]==1):
+                traveled_array=[[i,z]]
+                temp = is_valid(traveled_array,array,[i,z],1,0)
+                if(temp>largest):
+                    largest = temp
+            z+=1
+        i+=1
+    return(largest)
+
+
+
+#next step is to change every index once have a temp store the largest and return the temp
+
+def change_and_find(array):
+    temp = 1
+    q = 0
+    r = 0
+    while q < len(array):
+        r = 0
+        while r < len(array[q]):
+            if array[q][r] == 0:
+                array[q][r] = 1
+                test = find_largest_island(array)
+                if test > temp:
+                    temp = test
+                array[q][r] = 0
+            r+=1       
+        q+=1
+        
+    return temp
+
+              
+test = change_and_find(test_list3)
+print(test)  
+
+
+#traveled_array.append([0,0])
+#test = is_valid(traveled_array,test_list2,[0,0],1,0)
+
+
+
+
+
+
+
